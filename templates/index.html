@@ -190,7 +190,7 @@
     </div>
 
     <p class="font-mono text-[10px] text-slate-600 mt-4 pt-4 border-t border-base-border">
-      Files served from <span class="text-slate-400">/uploads</span> on the server.
+      Files served dynamically from <span class="text-slate-400">Local uploads / Google Drive</span>.
     </p>
   </section>
 
@@ -224,7 +224,7 @@
     return `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>`;
   }
 
-  // ---------- Load Files ----------
+  // ---------- Load Files დინამიურად (Local + Drive მხარდაჭერით) ----------
   async function loadFiles() {
     const el = document.getElementById('fileList');
     if (!el) return;
@@ -236,11 +236,11 @@
         return;
       }
       el.innerHTML = data.files.map(f => `
-        <a href="${API_HOST}/download/${encodeURIComponent(f.name)}" class="flex items-center gap-3 bg-base-950/60 hover:bg-base-800 border border-base-border rounded-md px-4 py-3 transition group">
+        <a href="${f.is_cloud ? f.download_url : API_HOST + f.download_url}" target="${f.is_cloud ? '_blank' : '_self'}" class="flex items-center gap-3 bg-base-950/60 hover:bg-base-800 border border-base-border rounded-md px-4 py-3 transition group">
           ${fileIcon()}
           <div class="flex-1 min-w-0">
             <p class="font-mono text-sm text-slate-200 truncate">${f.name}</p>
-            <p class="font-mono text-[10px] text-slate-500">${f.size} · ${f.modified}</p>
+            <p class="font-mono text-[10px] text-slate-500">${f.size} · ${f.is_cloud ? 'Cloud Drive' : 'Local Server'}</p>
           </div>
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-600 group-hover:text-cyan-glow transition shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"/></svg>
         </a>`).join('');
